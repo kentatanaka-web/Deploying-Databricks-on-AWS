@@ -1,0 +1,9 @@
+# OS files
+Thumbs.db
+
+# Python cache (if you run local scripts)
+__pycache__/
+*.pyc
+
+# Databricks local artifacts (if generated)
+.databricks/

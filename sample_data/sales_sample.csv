@@ -1,0 +1,6 @@
+order_id,order_date,customer_id,product_name,quantity,unit_price,amount
+O-0001,2026-05-01,C-001,Notebook,2,1200.00,2400.00
+O-0002,2026-05-01,C-002,Mouse,1,3500.00,3500.00
+O-0003,2026-05-02,C-003,Keyboard,1,6800.00,6800.00
+O-0004,2026-05-02,C-001,Monitor,1,22000.00,22000.00
+O-0005,2026-05-03,C-004,Docking Station,1,9800.00,9800.00
