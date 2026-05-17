@@ -49,6 +49,8 @@ databricks-aws-data-platform-basic/
 │   ├── 02_databricks_setup.md
 │   ├── 03_bronze_silver_gold.md
 │   ├── 04_job_dashboard.md
+│   ├── 05_free_edition_support_check.md
+│   ├── 06_execution_runbook.md
 │   └── architecture.md
 ├── sql/
 ├── notebooks/
@@ -69,3 +71,11 @@ databricks-aws-data-platform-basic/
 1. docs/01_aws_setup.md を見ながらS3とIAMロールを作成する
 2. docs/02_databricks_setup.md を見ながらStorage CredentialとExternal Locationを作成する
 3. SQLとNotebookを追加して、Bronze -> Silver -> Goldを実装する
+
+## Free Edition利用時の確認
+
+- Free Editionで進める場合は、先に docs/05_free_edition_support_check.md を確認してから実装を開始する
+
+## 推奨実行ルート
+
+- 手順全体は docs/06_execution_runbook.md に従う

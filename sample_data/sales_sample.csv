@@ -1,6 +1,31 @@
-order_id,order_date,customer_id,product_name,quantity,unit_price,amount
-O-0001,2026-05-01,C-001,Notebook,2,1200.00,2400.00
-O-0002,2026-05-01,C-002,Mouse,1,3500.00,3500.00
-O-0003,2026-05-02,C-003,Keyboard,1,6800.00,6800.00
-O-0004,2026-05-02,C-001,Monitor,1,22000.00,22000.00
-O-0005,2026-05-03,C-004,Docking Station,1,9800.00,9800.00
+transaction_id,transaction_date,product_name,category,quantity,unit_price,total_amount,customer_id,region,store_id,sales_person,discount_rate,payment_method,status
+TXN001,2026-05-01,Laptop Pro,Electronics,1,1500.00,1500.00,CUST001,Tokyo,ST001,yamada,0.00,CreditCard,Completed
+TXN002,2026-05-01,USB Cable,Accessories,5,15.00,75.00,CUST002,Osaka,ST002,suzuki,0.10,Cash,Completed
+TXN003,2026-05-01,Monitor 27",Electronics,2,450.00,900.00,CUST003,Kyoto,ST001,yamada,0.05,CreditCard,Completed
+TXN004,2026-05-02,Keyboard Mechanical,Accessories,3,120.00,360.00,CUST001,Tokyo,ST001,yamada,0.00,CreditCard,Completed
+TXN005,2026-05-02,Wireless Mouse,Accessories,1,45.00,45.00,CUST004,Nagoya,ST003,tanaka,0.15,CreditCard,Completed
+TXN006,2026-05-02,Desk Lamp,Office,4,80.00,320.00,CUST005,Saitama,ST002,suzuki,0.00,Cash,Completed
+TXN007,2026-05-03,Tablet Pro,Electronics,1,1200.00,1200.00,CUST002,Osaka,ST002,suzuki,0.10,CreditCard,Completed
+TXN008,2026-05-03,Notebook 100P,Office,10,8.00,80.00,CUST006,Tokyo,ST001,yamada,0.05,Cash,Completed
+TXN009,2026-05-03,Pen Set,Office,2,12.00,24.00,CUST003,Kyoto,ST001,yamada,0.00,Cash,Completed
+TXN010,2026-05-04,External HDD 1TB,Electronics,1,90.00,90.00,CUST007,Yokohama,ST003,tanaka,0.10,CreditCard,Completed
+TXN011,2026-05-04,HDMI Cable,Accessories,8,10.00,80.00,CUST001,Tokyo,ST001,yamada,0.00,CreditCard,Completed
+TXN012,2026-05-04,Monitor 24",Electronics,3,350.00,1050.00,CUST004,Nagoya,ST003,tanaka,0.15,CreditCard,Completed
+TXN013,2026-05-05,Standing Desk,Office,1,600.00,600.00,CUST008,Saitama,ST002,suzuki,0.05,CreditCard,Completed
+TXN014,2026-05-05,Desk Chair Pro,Office,1,400.00,400.00,CUST005,Saitama,ST002,suzuki,0.00,Cash,Completed
+TXN015,2026-05-05,Laptop Pro,Electronics,1,1500.00,1500.00,CUST009,Tokyo,ST001,yamada,0.10,CreditCard,Completed
+TXN016,2026-05-06,USB-C Hub,Accessories,2,55.00,110.00,CUST006,Tokyo,ST001,yamada,0.05,CreditCard,Completed
+TXN017,2026-05-06,Mechanical Keyboard,Accessories,1,150.00,150.00,CUST010,Osaka,ST002,suzuki,0.00,Cash,Completed
+TXN018,2026-05-06,Webcam 1080p,Electronics,2,75.00,150.00,CUST002,Osaka,ST002,suzuki,0.10,CreditCard,Completed
+TXN019,2026-05-07,Mouse Pad XXL,Accessories,5,25.00,125.00,CUST003,Kyoto,ST001,yamada,0.00,Cash,Completed
+TXN020,2026-05-07,Monitor Stand,Accessories,3,35.00,105.00,CUST007,Yokohama,ST003,tanaka,0.05,CreditCard,Completed
+TXN021,2026-05-08,Tablet Pro,Electronics,1,1200.00,1200.00,CUST004,Nagoya,ST003,tanaka,0.15,CreditCard,Completed
+TXN022,2026-05-08,USB Cable,Accessories,10,15.00,150.00,CUST001,Tokyo,ST001,yamada,0.00,CreditCard,Completed
+TXN023,2026-05-08,Wireless Mouse,Accessories,2,45.00,90.00,CUST008,Saitama,ST002,suzuki,0.10,Cash,Completed
+TXN024,2026-05-09,Desk Lamp,Office,2,80.00,160.00,CUST005,Saitama,ST002,suzuki,0.00,Cash,Completed
+TXN025,2026-05-09,Notebook 100P,Office,5,8.00,40.00,CUST009,Tokyo,ST001,yamada,0.05,Cash,Completed
+TXN026,2026-05-10,Laptop Pro,Electronics,2,1500.00,3000.00,CUST010,Osaka,ST002,suzuki,0.10,CreditCard,Completed
+TXN027,2026-05-10,External HDD 1TB,Electronics,3,90.00,270.00,CUST006,Tokyo,ST001,yamada,0.05,CreditCard,Completed
+TXN028,2026-05-11,Keyboard Mechanical,Accessories,1,120.00,120.00,CUST002,Osaka,ST002,suzuki,0.00,CreditCard,Completed
+TXN029,2026-05-11,Monitor 27",Electronics,1,450.00,450.00,CUST003,Kyoto,ST001,yamada,0.15,CreditCard,Completed
+TXN030,2026-05-12,Standing Desk,Office,2,600.00,1200.00,CUST007,Yokohama,ST003,tanaka,0.05,CreditCard,Completed
