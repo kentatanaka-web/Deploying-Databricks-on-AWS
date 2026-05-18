@@ -613,9 +613,6 @@ git commit -m "Complete E-5 SQL Analysis: 8 queries, business insights documente
 git push -u origin main
 ```
 
-### **E-8: ダッシュボード（オプション）**
-Databricks SQL Dashboard or Tableau で可視化
-
 ---
 
 ## 実行予定クエリ一覧

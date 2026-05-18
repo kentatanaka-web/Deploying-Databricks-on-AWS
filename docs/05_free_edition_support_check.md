@@ -32,7 +32,7 @@ Databricks公式のS3接続手順には、Storage CredentialとExternal Location
 ## 判定
 
 - Free Editionのままでは、AWS S3連携を完了できない可能性が高い
-- 転職用ポートフォリオとして再現性を重視する場合は、Databricks on AWSの通常ワークスペースへ移行する
+- 再現性を重視する場合は、Databricks on AWSの通常ワークスペースへ移行する
 
 ## 移行後に再実施する手順（推奨）
 
@@ -41,7 +41,7 @@ Databricks公式のS3接続手順には、Storage CredentialとExternal Location
 3. docs/01_aws_setup.md に沿ってS3バケットとIAMポリシーを作成する
 4. docs/02_databricks_setup.md に沿ってStorage CredentialとExternal Locationを作成する
 5. notebooks配下の処理を実行し、Bronze / Silver / Goldを作成する
-6. JobとDashboardを作成し、READMEに実行結果を記録する
+6. SQL分析を実行し、READMEに実行結果を記録する
 
 ## 詰まったときの確認ポイント
 

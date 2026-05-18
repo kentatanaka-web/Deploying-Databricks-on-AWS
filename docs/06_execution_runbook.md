@@ -2,13 +2,28 @@
 
 ## ゴール
 
-AWS S3 + Databricks + Unity Catalog（Storage Credential / External Location）で、Bronze / Silver / Gold基盤を再現可能な形で構築する。
+AWS S3 + Databricks + Unity Catalog（Storage Credential / External Location）で、Bronze / Silver / Gold基盤を再現可能な形で構築し、SQL分析までを完了する。
 
 ## 方針
 
 - Free Editionで制約がある場合は、早めにAWS通常ワークスペースへ移行する
 - 以降は公式手順に沿って、IAMロール作成 -> Storage Credential -> External Location の順で実施する
 - すべての設定値と画面結果をGitHubに記録する
+- 本Runbookはダッシュボード作成を含めない（可視化は次フェーズ）
+
+## フェーズ0: 全体像と命名の固定（実装前）
+
+実装前に以下を読み、命名を先に確定する。
+
+- docs/00_project_overview_and_naming.md
+
+確認項目:
+
+- S3バケット名
+- IAMロール名 / IAMポリシー名
+- Catalog / Schema名
+- Storage Credential / External Location名
+- Bronze / Silver / Gold テーブル名
 
 ## フェーズA: 事前判定（30分）
 
@@ -375,28 +390,57 @@ CREATE SCHEMA IF NOT EXISTS aws_demo_catalog.sales_schema;
 
 1. `notebooks/01_ingest_bronze.py` をDatabricksで実行
 2. テーブル `aws_demo_catalog.sales_schema.bronze_sales` の件数を確認
+3. 期待件数（今回データは30行）と一致することを確認
+4. 生データとの差異を確認
+   - 取り込みメタデータ列（ingestion timestamp等）が追加されている
+   - 欠損/型崩れが異常増加していない
 
 ### E-3. Silver作成
 
 1. `notebooks/02_transform_silver.py` を実行
 2. 型変換・欠損除外が反映されているか確認
+3. 指標列が作成されているか確認
+   - discount_amount
+   - net_sales_amount
+4. 品質チェックを実行
+   - NULL件数
+   - 重複件数
+   - 金額の負値/異常値
 
 ### E-4. Gold作成
 
 1. `notebooks/03_create_gold.py` を実行
-2. `gold_sales_daily` が作成されているか確認
+2. 以下テーブルが作成されているか確認
+   - `aws_demo_catalog.sales_schema.gold_daily_sales`
+   - `aws_demo_catalog.sales_schema.gold_salesperson_ranking`
+3. テーブルスキーマ確認を実行
+   - `DESCRIBE aws_demo_catalog.sales_schema.gold_daily_sales;`
+   - `DESCRIBE aws_demo_catalog.sales_schema.gold_salesperson_ranking;`
+4. 期待する粒度（1日1行、営業担当1行）が守られているか確認
 
 ### E-5. SQLで品質確認
 
-1. `sql/03_analysis_queries.sql` のクエリを実行
-2. 日次売上・商品別売上が返ることを確認
+1. `sql/03_analysis_queries.sql` を実行（基本確認）
+2. `sql/04_advanced_analytics.sql` を実行（分析8本）
+3. 結果を `sql/05_query_execution_log.md` に記録
+4. 記録内容の最低基準
+   - クエリ
+   - 結果（主要列）
+   - 解釈（何がわかったか）
+   - 改善アクション（任意）
 
 ### E-6. このフェーズの完了条件
 
 - Bronze / Silver / Gold の3テーブル作成済み
 - 分析クエリがエラーなく実行できる
 
-## フェーズF: Job / Dashboard / GitHub公開
+追加完了条件:
+
+- スキーマ不一致が解消されている
+- 分析結果を口頭で説明できる
+- 失敗したクエリの原因と修正を説明できる
+
+## フェーズF: Job準備 / GitHub公開
 
 ### F-1. Jobを作成
 
@@ -408,38 +452,97 @@ CREATE SCHEMA IF NOT EXISTS aws_demo_catalog.sales_schema;
    - Task3: 03_create_gold（Task2依存）
 4. `Run now` で実行し、3タスク成功を確認
 
-### F-2. Dashboardを作成
-
-1. Databricks SQLでGoldテーブル向けクエリを作成
-2. 可視化（折れ線・棒）を作成
-3. Dashboardに配置して保存
-
-### F-3. 証跡を保存
+### F-2. 証跡を保存
 
 1. 以下のスクリーンショットを取得
    - Storage Credential作成完了
    - External Location作成完了
    - Job成功画面
-   - Dashboard画面
 2. `images/` 配下に保存する
 
-### F-4. READMEとdocsを更新
+### F-3. READMEとdocsを更新
 
 1. 実際の実行日と結果を追記
 2. トラブルと対処を1行ずつ残す
 3. 参照リンク（docs/sql/notebooks）を追記
 
-### F-5. GitHubへ反映
+### F-4. GitHubへ反映
 
 1. 変更ファイルを確認
 2. コミット作成
 3. `main` へプッシュ
 
-### F-6. このフェーズの完了条件
+### F-5. このフェーズの完了条件
 
 - Job成功履歴あり
-- Dashboard表示確認済み
 - GitHubで第三者が手順を追える状態
+
+## 今回のつまずきポイント整理（実績ベース）
+
+### 1. PySpark関数の誤使用
+
+- 症状: `cannot import name 'to_decimal'`
+- 原因: PySpark 3.xで `to_decimal` を想定した実装
+- 対応: `col("...").cast("decimal(10,2)")` に統一
+- 再発防止: 型変換は `cast` を第一候補として実装
+
+### 2. SQL/列名の不一致
+
+- 症状: `UNRESOLVED_COLUMN`（例: `daily_net_sales`, `avg_transaction_value`）
+- 原因: 期待したGold列名と実テーブル列名の差分
+- 対応: `DESCRIBE <table>` で実スキーマを先確認してクエリを修正
+- 再発防止: 集計テーブル作成直後にスキーマをREADMEへ記録
+
+### 3. 集計テーブルの存在前提崩れ
+
+- 症状: `gold_category_summary` が存在しない
+- 原因: Notebook実装と参照SQLの前提ズレ
+- 対応: `silver_sales` から代替集計クエリを作成
+- 再発防止: `SHOW TABLES IN aws_demo_catalog.sales_schema` を実行して依存先を固定
+
+### 4. ゼロ除算
+
+- 症状: ROI計算時のdivisionエラー
+- 原因: 割引額が0の行を分母に利用
+- 対応: `CASE WHEN SUM(discount_amount) > 0 THEN ... END`
+- 再発防止: 比率計算の分母は常に0ガードを入れる
+
+## パート別見直しチェックリスト（詳細版）
+
+### Part A: Free Edition判定
+
+- `Credentials` / `External locations` のUI有無を記録したか
+- 制約時に移行判断理由を記録したか
+
+### Part B: AWSワークスペース準備
+
+- リージョン一致（S3とDatabricks）を確認したか
+- メタストア権限不足時の依頼内容を言語化できるか
+
+### Part C: AWS（S3/IAM）
+
+- S3パス設計を説明できるか（raw/bronze/silver/gold）
+- IAMロールの信頼ポリシーとアクセス許可の違いを説明できるか
+- `ListBucket` と `GetObject/PutObject` のResource差を説明できるか
+
+### Part D: Unity Catalog
+
+- Storage Credential = 認証、External Location = アクセス先 を説明できるか
+- External ID反映前後の状態差を説明できるか
+- External Locationに対する権限付与を確認したか
+
+### Part E: Bronze/Silver/Gold + SQL分析
+
+- Bronze: 取り込み件数と原本一致を確認したか
+- Silver: 型、NULL、重複、業務列の品質を確認したか
+- Gold: 粒度と列名を `DESCRIBE` で固定化したか
+- SQL分析: 結果と解釈をログに残したか
+
+### Part F: Job準備 + GitHub
+
+- タスク依存（Bronze -> Silver -> Gold）を実行確認したか
+- 失敗時にどこで止まったかを説明できるか
+- READMEとRunbookの実装差分を解消したか
 
 ## 失敗時のチェックリスト
 
@@ -451,6 +554,10 @@ CREATE SCHEMA IF NOT EXISTS aws_demo_catalog.sales_schema;
   - Storage Credential名、S3 URL、権限を確認
 - Databricks側メニュー不足
   - Free Edition制約の可能性を再確認
+- UNRESOLVED_COLUMN
+   - `DESCRIBE` で実カラムを確認し、SQL中の列名を合わせる
+- テーブル未存在
+   - `SHOW TABLES IN aws_demo_catalog.sales_schema` で依存先を再確認
 
 ## コマンド記録テンプレート（GitHub向け）
 
